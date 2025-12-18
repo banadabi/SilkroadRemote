@@ -47,15 +47,21 @@ try {
         $deactivateStmt->execute([':old_qr_id' => $oldQrId]);
         
         // Also migrate data from old QR to new QR in related tables
-        $tables = ['characters', 'botting_commands', 'chat_messages', 'party_info', 'item_info'];
-        foreach ($tables as $table) {
-            $migrateSql = "UPDATE $table SET qr_id = :new_qr_id WHERE qr_id = :old_qr_id";
-            $migrateStmt = $pdo->prepare($migrateSql);
-            $migrateStmt->execute([
-                ':new_qr_id' => $newQrId,
-                ':old_qr_id' => $oldQrId
-            ]);
-        }
+        // Using individual queries to avoid SQL injection - table names are hardcoded
+        $migrateStmt = $pdo->prepare("UPDATE characters SET qr_id = :new_qr_id WHERE qr_id = :old_qr_id");
+        $migrateStmt->execute([':new_qr_id' => $newQrId, ':old_qr_id' => $oldQrId]);
+        
+        $migrateStmt = $pdo->prepare("UPDATE botting_commands SET qr_id = :new_qr_id WHERE qr_id = :old_qr_id");
+        $migrateStmt->execute([':new_qr_id' => $newQrId, ':old_qr_id' => $oldQrId]);
+        
+        $migrateStmt = $pdo->prepare("UPDATE chat_messages SET qr_id = :new_qr_id WHERE qr_id = :old_qr_id");
+        $migrateStmt->execute([':new_qr_id' => $newQrId, ':old_qr_id' => $oldQrId]);
+        
+        $migrateStmt = $pdo->prepare("UPDATE party_info SET qr_id = :new_qr_id WHERE qr_id = :old_qr_id");
+        $migrateStmt->execute([':new_qr_id' => $newQrId, ':old_qr_id' => $oldQrId]);
+        
+        $migrateStmt = $pdo->prepare("UPDATE item_info SET qr_id = :new_qr_id WHERE qr_id = :old_qr_id");
+        $migrateStmt->execute([':new_qr_id' => $newQrId, ':old_qr_id' => $oldQrId]);
     }
     
     // Insert or update the new QR code

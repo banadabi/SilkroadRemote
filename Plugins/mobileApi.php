@@ -152,10 +152,16 @@ try {
                 sendJsonResponse(['error' => 'No command parameters provided'], 400);
             }
             
-            // First ensure record exists
-            $insertSql = "INSERT IGNORE INTO botting_commands (qr_id, account_id) VALUES (:qr_id, 0)";
+            // First ensure record exists - get account_id from characters table if available
+            $accountSql = "SELECT account_id FROM characters WHERE qr_id = :qr_id LIMIT 1";
+            $accountStmt = $pdo->prepare($accountSql);
+            $accountStmt->execute([':qr_id' => $qrId]);
+            $accountResult = $accountStmt->fetch();
+            $accountId = $accountResult ? (int)$accountResult['account_id'] : 0;
+            
+            $insertSql = "INSERT IGNORE INTO botting_commands (qr_id, account_id) VALUES (:qr_id, :account_id)";
             $insertStmt = $pdo->prepare($insertSql);
-            $insertStmt->execute([':qr_id' => $qrId]);
+            $insertStmt->execute([':qr_id' => $qrId, ':account_id' => $accountId]);
             
             // Then update
             $sql = "UPDATE botting_commands SET " . implode(', ', $updates) . " WHERE qr_id = :qr_id";

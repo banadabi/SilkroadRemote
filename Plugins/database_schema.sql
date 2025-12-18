@@ -75,11 +75,14 @@ CREATE TABLE IF NOT EXISTS chat_messages (
 );
 
 -- Notifications table
+-- notification_type values:
+--   0 = Character death notification
+--   1 = Rare item drop notification
 CREATE TABLE IF NOT EXISTS notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     qr_id VARCHAR(255) NOT NULL,
     account_id BIGINT NOT NULL,
-    notification_type INT DEFAULT 0,
+    notification_type INT DEFAULT 0 COMMENT '0=death, 1=rare_item',
     notification_count INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_qr_id (qr_id),

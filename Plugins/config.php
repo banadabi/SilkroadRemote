@@ -65,6 +65,26 @@ function sanitizeInput($data) {
 }
 
 /**
+ * Convert various boolean representations to integer (0 or 1)
+ * 
+ * @param mixed $value Value to convert (string, bool, int)
+ * @return int 1 for true values, 0 for false values
+ */
+function convertToBoolean($value) {
+    if ($value === null) {
+        return 0;
+    }
+    if (is_bool($value)) {
+        return $value ? 1 : 0;
+    }
+    if (is_numeric($value)) {
+        return (int)$value !== 0 ? 1 : 0;
+    }
+    $truthy = ['true', 'True', 'TRUE', '1', 'yes', 'Yes', 'YES', 'on'];
+    return in_array($value, $truthy, true) ? 1 : 0;
+}
+
+/**
  * Send JSON response
  * 
  * @param array $data Data to send as JSON
@@ -73,6 +93,8 @@ function sanitizeInput($data) {
 function sendJsonResponse($data, $statusCode = 200) {
     http_response_code($statusCode);
     header('Content-Type: application/json; charset=utf-8');
+    // Note: In production, replace '*' with your specific domain for security
+    // Example: header('Access-Control-Allow-Origin: https://yourdomain.com');
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: GET, POST');
     header('Access-Control-Allow-Headers: Content-Type');

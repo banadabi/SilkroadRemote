@@ -63,7 +63,7 @@ $actualTrainingAreaY = isset($_GET['actualTrainingAreaY']) ? (float)$_GET['actua
 $actualTrainingRadius = isset($_GET['actualTrainingRadius']) ? (float)$_GET['actualTrainingRadius'] : 0;
 $pcStartBot = isset($_GET['pcStartBot']) ? (int)$_GET['pcStartBot'] : 0;
 $pcStopBot = isset($_GET['pcStopBot']) ? (int)$_GET['pcStopBot'] : 0;
-$connectedState = isset($_GET['connectedState']) ? (int)($_GET['connectedState'] === 'True' || $_GET['connectedState'] === '1' || $_GET['connectedState'] === true) : 0;
+$connectedState = isset($_GET['connectedState']) ? convertToBoolean($_GET['connectedState']) : 0;
 
 // Validate required fields
 if (empty($qrId)) {
